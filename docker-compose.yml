@@ -1,0 +1,13 @@
+# following this for front end build - https://betterprogramming.pub/4-steps-to-dockerize-your-next-js-app-cfa8a54881af
+version: "3.9" # optional since v1.27.0
+services:
+  frontend-app:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+      - /app/.next
