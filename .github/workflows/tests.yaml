@@ -1,0 +1,20 @@
+name: Github Actions Test
+on:
+  push:
+    branches: [main]
+jobs:
+  Test-Action:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        dir:
+          - "frontend"
+          - "backend"
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: "14"
+      - run: npm install
+      - run: pwd
+      - run: echo "it ran"
