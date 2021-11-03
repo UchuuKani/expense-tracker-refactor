@@ -1,3 +1,5 @@
+# matrix strategy usage to run one job for multiple project repos found here:
+# https://stackoverflow.com/questions/65855054/can-you-have-multiple-working-directories-with-github-actions
 name: Github Actions Test
 on:
   push:
