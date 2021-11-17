@@ -1,10 +1,10 @@
 export interface ITransaction {
-  id: number;
+  id?: number;
   user_id: number;
   description: string;
   amount: number;
   transaction_date: Date;
-  tags: ITag[];
+  tags?: ITag[];
 }
 
 export interface ITag {
@@ -13,7 +13,7 @@ export interface ITag {
 }
 
 export interface IUser {
-  id: number;
+  id?: number;
   name: string;
   email: string;
   password: string;

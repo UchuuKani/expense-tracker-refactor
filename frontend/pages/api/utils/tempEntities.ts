@@ -1,4 +1,4 @@
-import { ITransaction, ITag, IUser } from "../../src/types";
+import { ITransaction, ITag, IUser } from "../../../src/types";
 
 interface IError {
   message?: string;
@@ -33,7 +33,7 @@ const testTransactionOne: ITransaction = {
 export const tempTransactionStore = {
   1: { ...testTransactionOne },
 };
-
+console.log("ehem asdfg", tempTransactionStore);
 export const tempTagStore = {
   1: {
     ...testTagOne,
@@ -63,24 +63,21 @@ export const getKeyInEntity = (entityStore: TempStore, key: number) => {
 };
 
 // POST a new entity
-export const addToEntity = (
-  entityName: string,
-  keyId: number,
-  payload: any
-): IError | any => {
+export const addToEntity = (entityName: string, payload: any): IError | any => {
+  console.log("ehem payload", payload);
   switch (true) {
     case entityName === "TRANSACTION": {
       const lastTransactionKey = getLastIntKey(tempTransactionStore);
 
       if (lastTransactionKey) {
         const keyPlusOne = lastTransactionKey + 1;
-        tempTransactionStore[keyId] = { ...payload };
-
-        return payload;
+        tempTransactionStore[keyPlusOne] = { ...payload };
+        console.log("ehem", tempTransactionStore);
+        return { ...payload, id: keyPlusOne };
       }
 
       const notFoundTransaction: IError = {
-        message: `Could not find an existing key`,
+        message: `Store not initialized`,
         status: 500,
       };
 
@@ -129,5 +126,7 @@ export const addToEntity = (
       return notFound;
   }
 };
+
+export const findOrCreateTags = () => {};
 
 // update an existing entity
