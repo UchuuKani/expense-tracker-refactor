@@ -1,0 +1,32 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders homepage unchanged 1`] = `
+<div
+  className="container"
+>
+  <main
+    className="main"
+  >
+    <h1
+      className="title"
+    >
+      Welcome to Expense Tracker!
+    </h1>
+    <button
+      onClick={[Function]}
+    >
+      Click to activate
+    </button>
+    <button
+      onClick={[Function]}
+    >
+      Click to activate
+    </button>
+    <button
+      onClick={[Function]}
+    >
+      Click to activate
+    </button>
+  </main>
+</div>
+`;
