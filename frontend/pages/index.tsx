@@ -1,7 +1,8 @@
 import Head from "next/head";
 import Image from "next/image";
-import styles from "../styles/Home.module.css";
+import styles from "../styles/Home.module.scss";
 import { Toggler } from "../src/components/FetchDataOnLoad";
+import Button from "../src/components/Button";
 import { ITransaction } from "../src/types";
 // import { TestForm } from "../src/components/FormInput";
 
@@ -17,8 +18,10 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className={styles.main}>
-        <h1 className={styles.title}>Welcome to Expense Tracker!</h1>
-
+        <h1 className={`${styles.title} test-me`}>
+          Welcome to Expense Tracker!
+        </h1>
+        <Button />
         {/* <FetchDataOnLoad id={5} testDate={new Date("2020-2-29")} /> */}
         <Toggler />
         <Toggler />
