@@ -1,21 +1,25 @@
-import { IncomingMessage, ServerResponse } from "http";
+import { NextApiRequest, NextApiResponse } from "next";
 import { tempTransactionStore, getKeyInEntity } from "../utils/tempEntities";
 
-export default (req: IncomingMessage, res: ServerResponse) => {
-  const { id: transactionId } = req?.query;
-  switch (true) {
-    case req.method === "GET": {
+export default (req: NextApiRequest, res: NextApiResponse) => {
+  let { id: transactionId } = req?.query;
+
+  if (req.method === "GET") {
+    if (typeof transactionId === "string") {
       const foundTransaction = getKeyInEntity(
         tempTransactionStore,
         transactionId
       );
 
       if (foundTransaction) return res.status(200).json(foundTransaction);
-      else return res.sendStatus(404);
     }
-    case req.method === "POST":
+
+    return res.status(404).send("Page not found");
+  } else if (req.method === "POST") {
+    if (typeof transactionId === "string") {
       return res.status(200).json(tempTransactionStore[transactionId]);
-    default:
-      return res.sendStatus(500);
+    }
   }
+
+  return res.status(500).send("Internal server error");
 };

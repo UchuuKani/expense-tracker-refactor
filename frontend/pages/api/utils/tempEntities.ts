@@ -6,7 +6,7 @@ interface IError {
 }
 
 interface TempStore {
-  [id: number]: ITransaction | ITag | IUser;
+  [id: PropertyKey]: ITransaction | ITag | IUser;
 }
 
 const testTagOne: ITag = {
@@ -23,24 +23,24 @@ const testUserOne: IUser = {
 
 const testTransactionOne: ITransaction = {
   id: 1,
-  user_id: testUserOne.id,
+  user_id: testUserOne?.id || 1,
   description: "Stuff",
   amount: 5000,
   transaction_date: new Date("2021-05-13"),
   tags: [{ ...testTagOne }],
 };
 
-export const tempTransactionStore = {
+export const tempTransactionStore: TempStore = {
   1: { ...testTransactionOne },
 };
-console.log("ehem asdfg", tempTransactionStore);
-export const tempTagStore = {
+
+export const tempTagStore: TempStore = {
   1: {
     ...testTagOne,
   },
 };
 
-export const tempUserStore = {
+export const tempUserStore: TempStore = {
   1: {
     ...testUserOne,
   },
@@ -58,73 +58,68 @@ export const getLastIntKey = (entityStore: TempStore): number | undefined => {
     : undefined;
 };
 
-export const getKeyInEntity = (entityStore: TempStore, key: number) => {
+export const getKeyInEntity = (entityStore: TempStore, key: string) => {
   return entityStore?.[key];
 };
 
 // POST a new entity
 export const addToEntity = (entityName: string, payload: any): IError | any => {
-  console.log("ehem payload", payload);
-  switch (true) {
-    case entityName === "TRANSACTION": {
-      const lastTransactionKey = getLastIntKey(tempTransactionStore);
+  if (entityName === "TRANSACTION") {
+    let lastTransactionKey = getLastIntKey(tempTransactionStore);
 
-      if (lastTransactionKey) {
-        const keyPlusOne = lastTransactionKey + 1;
-        tempTransactionStore[keyPlusOne] = { ...payload };
-        console.log("ehem", tempTransactionStore);
-        return { ...payload, id: keyPlusOne };
-      }
-
-      const notFoundTransaction: IError = {
-        message: `Store not initialized`,
-        status: 500,
-      };
-
-      return notFoundTransaction;
+    if (lastTransactionKey) {
+      const keyPlusOne = lastTransactionKey + 1;
+      tempTransactionStore[keyPlusOne] = { ...payload };
+      console.log("ehem", tempTransactionStore);
+      return { ...payload, id: keyPlusOne };
     }
-    case entityName === "TAG": {
-      const lastTagKey = getLastIntKey(tempTagStore);
 
-      if (lastTagKey) {
-        const keyPlusOne = lastTagKey + 1;
-        tempTagStore[keyId] = { ...payload };
+    const notFoundTransaction: IError = {
+      message: `Store not initialized`,
+      status: 500,
+    };
 
-        return payload;
-      }
+    return notFoundTransaction;
+  } else if (entityName === "TAG") {
+    const lastTagKey = getLastIntKey(tempTagStore);
 
-      const notFoundTag: IError = {
-        message: `Could not find an existing key`,
-        status: 500,
-      };
+    if (lastTagKey) {
+      const tagKeyPlusOne = lastTagKey + 1;
+      tempTagStore[tagKeyPlusOne] = { ...payload };
 
-      return notFoundTag;
+      return payload;
     }
-    case entityName === "USER": {
-      const lastUserKey = getLastIntKey(tempUserStore);
 
-      if (lastUserKey) {
-        const keyPlusOne = lastUserKey + 1;
-        tempUserStore[keyId] = { ...payload };
+    const notFoundTag: IError = {
+      message: `Could not find an existing key`,
+      status: 500,
+    };
 
-        return payload;
-      }
+    return notFoundTag;
+  } else if (entityName === "USER") {
+    const lastUserKey = getLastIntKey(tempUserStore);
 
-      const notFoundUser: IError = {
-        message: `Could not find an existing key`,
-        status: 500,
-      };
+    if (lastUserKey) {
+      const keyPlusOne = lastUserKey + 1;
+      tempUserStore[keyPlusOne] = { ...payload };
 
-      return notFoundUser;
+      return payload;
     }
-    default:
-      const notFound: IError = {
-        message: `${entityName} entity not found for key ${keyId}`,
-        status: 404,
-      };
 
-      return notFound;
+    const notFoundUser: IError = {
+      message: `Could not find an existing key`,
+      status: 500,
+    };
+
+    return notFoundUser;
   }
+
+  const notFound: IError = {
+    message: `${entityName} entity not found`,
+    status: 404,
+  };
+
+  return notFound;
 };
 
 export const findOrCreateTags = () => {};
