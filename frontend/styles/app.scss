@@ -5,7 +5,24 @@
 */
 
 .button-base {
-  background-color: $big-red;
+  background-color: $confirmation-button;
+  color: $white;
+  padding: 6px 12px;
+  border-radius: 60px;
+  text-align: center;
+  min-width: 160px;
+  min-height: 24px;
+  line-height: 24px;
+  width: auto;
+  font-size: 16px;
+  display: block;
+  font-weight: 600;
+  border: 0;
+
+  &:hover {
+    cursor: pointer;
+    background-color: $confirmation-hover;
+  }
 }
 
 /*
