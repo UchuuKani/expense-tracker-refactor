@@ -1,5 +1,13 @@
 import React from "react";
 
-const Button = () => <button className="button-base">Click me</button>;
+interface IProps {
+  handleClick: (event: React.MouseEvent<HTMLElement>) => void;
+}
+
+const Button: React.FC<IProps> = ({ children, handleClick }) => (
+  <button className="button-base" onClick={handleClick}>
+    {children}
+  </button>
+);
 
 export default Button;
