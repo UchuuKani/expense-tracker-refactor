@@ -13,7 +13,7 @@ const reducer = (state, event) => {
 };
 
 export const SimpleComponentNoContext: React.FC = () => {
-  const [state, dispatch] = useReducer(reducer, simpleMachine.initial);
+  const [state, send] = useReducer(reducer, simpleMachine.initial);
 
   return <div>Hello vanilla test</div>;
 };
@@ -35,7 +35,8 @@ const simpleMachineWithContext = {
 
 const reducerWithContext = (state, event) => {
   const transition =
-    simpleMachine.states[state.value].on?.[event.type] ?? state.value;
+    simpleMachineWithContext.states[state.value].on?.[event.type] ??
+    state.value;
 
   // No external state updates
   if (typeof transition === "string") {
