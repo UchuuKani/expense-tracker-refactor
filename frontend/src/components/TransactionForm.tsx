@@ -117,9 +117,16 @@ const TransactionForm: React.FC = (props) => {
       </div>
       <div className="transaction-field-container">
         <label htmlFor="date">Date:</label>
-        {/* seems like using type="date" is inserting some default styles from 
-            Chrome which messes up alignment with rest of input fields. Selector in
-            question?: input[type="date" i]
+        {/* 
+          seems like using type="date" is inserting some default styles from 
+          Chrome which messes up alignment with rest of input fields. Selector in
+          question?: input[type="date" i]
+        */}
+        {/* 
+          may want to use Moment for validating date-related inputs and processing
+          https://momentjs.com/docs/#/-project-status/
+          though according to docs there may be better alternatives now
+          as of 11/29/2021
         */}
         <input
           id="date"
