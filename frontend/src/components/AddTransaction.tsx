@@ -1,8 +1,6 @@
 import React, { useState, FormEvent, ChangeEvent } from "react";
-// import axios from "axios";
 
 import { ITransaction } from "./Transaction";
-// import styles from "./AddTransaction.module.scss";
 
 // use FormEvent to type the submit event in the form
 // use ChangeEvent to type the onChange events
@@ -10,10 +8,6 @@ import { ITransaction } from "./Transaction";
 interface Props {
   userId: string;
   addNewTransaction: (actionFn: any, transaction: ITransaction) => void;
-}
-
-interface ServerResponse {
-  data: ITransaction;
 }
 
 function addTransactionCreator(transaction: ITransaction): {
