@@ -79,3 +79,35 @@ h6 {
 #__next {
   isolation: isolate;
 }
+
+/*
+  styles to remove up and down arrows for input of type="number" in Chrome
+*/
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/*
+  remove autofill background color for input fields on Chrome:
+  https://stackoverflow.com/a/14205976
+*/
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px white inset !important;
+  box-shadow: 0 0 0 30px white inset !important;
+}
+
+/*
+  styles to remove up and down arrows for input of type="number" in Firefox
+*/
+
+input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+  margin: 0;
+}
