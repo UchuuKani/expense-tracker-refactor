@@ -1,9 +1,10 @@
 import React, { useReducer } from "react";
+import Button from "./Button";
 import { useMachine } from "@xstate/react";
 
 interface FormState {
   date: Date;
-  amount: number;
+  amount: number | undefined;
   description: string;
   tags?: string[];
 }
@@ -20,11 +21,16 @@ interface ReducerEvent {
 }
 
 const initialFormState: FormState = {
-  amount: 0,
+  amount: undefined,
   description: "",
   tags: [],
   date: new Date("2021-05-25"),
 };
+
+// type guard function, implementation from SO: https://stackoverflow.com/a/57065841
+function isFieldType(fieldType: string): fieldType is FieldTypes {
+  return ["amount", "description", "tags", "date"].includes(fieldType);
+}
 
 function reducer(state: FormState, event: ReducerEvent): FormState {
   switch (event.type) {
@@ -43,22 +49,25 @@ function reducer(state: FormState, event: ReducerEvent): FormState {
 
 const TransactionForm: React.FC = (props) => {
   const [state, send] = useReducer(reducer, initialFormState);
+
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    send({
-      type: "CHANGE",
-      payload: { field: event.target.name, value: event.target.value },
-    });
+    // usage of a type guard I believe
+    if (isFieldType(event.target.name)) {
+      send({
+        type: "CHANGE",
+        payload: { field: event.target.name, value: event.target.value },
+      });
+    }
+  };
+
+  const handleSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
+
+    console.log("form submitted");
   };
 
   return (
-    <form
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        padding: 10,
-        textAlign: "center",
-      }}
-    >
+    <form className="transaction-container" onSubmit={handleSubmit}>
       <div>
         {" "}
         <label htmlFor="description">Description</label>
@@ -76,12 +85,13 @@ const TransactionForm: React.FC = (props) => {
         <input
           id="amount"
           name="amount"
+          type="number"
           value={state.amount}
           onChange={handleChange}
           disabled={false}
-          placeholder=""
         />
       </div>
+      <Button type="submit">Submit</Button>
     </form>
   );
 };
