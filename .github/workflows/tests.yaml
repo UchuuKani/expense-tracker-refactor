@@ -17,9 +17,11 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: "14"
-      - run: cd ${{ matrix.dir }}
-      - working-directory: ./${{ matrix.dir }}
       - run: pwd
+        working-directory: ./${{ matrix.dir }}
       - run: echo $(pwd)
+        working-directory: ./${{ matrix.dir }}
       - run: npm install
+        working-directory: ./${{ matrix.dir }}
       - run: npm run test
+        working-directory: ./${{ matrix.dir }}
