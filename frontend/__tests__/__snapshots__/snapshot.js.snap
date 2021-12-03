@@ -8,25 +8,106 @@ exports[`renders homepage unchanged 1`] = `
     className="main"
   >
     <h1
-      className="title"
+      className="title test-me"
     >
       Welcome to Expense Tracker!
     </h1>
-    <button
-      onClick={[Function]}
+    <form
+      className="transaction-form-container"
+      onSubmit={[Function]}
     >
-      Click to activate
-    </button>
-    <button
-      onClick={[Function]}
-    >
-      Click to activate
-    </button>
-    <button
-      onClick={[Function]}
-    >
-      Click to activate
-    </button>
+      <div
+        className="transaction-field-container"
+      >
+        <label
+          htmlFor="description"
+        >
+          Description:
+        </label>
+        <input
+          disabled={false}
+          id="description"
+          name="description"
+          onBlur={[Function]}
+          onChange={[Function]}
+          type="text"
+          value=""
+        />
+        
+      </div>
+      <div
+        className="transaction-field-container"
+      >
+        <label
+          htmlFor="amount"
+        >
+          Amount:
+        </label>
+        <input
+          disabled={false}
+          id="amount"
+          name="amount"
+          onBlur={[Function]}
+          onChange={[Function]}
+          type="number"
+          value=""
+        />
+        
+      </div>
+      <div
+        className="transaction-field-container"
+      >
+        <label
+          htmlFor="tagInput"
+        >
+          Tags:
+        </label>
+        <input
+          disabled={false}
+          id="tagInput"
+          name="tagInput"
+          onBlur={[Function]}
+          onChange={[Function]}
+          type="text"
+          value=""
+        />
+        
+        <button
+          className="button-base "
+          onClick={[Function]}
+          style={Object {}}
+          type="button"
+        >
+          Add Tag
+        </button>
+      </div>
+      <div
+        className="transaction-field-container"
+      >
+        <label
+          htmlFor="date"
+        >
+          Date:
+        </label>
+        <input
+          disabled={false}
+          id="date"
+          name="date"
+          onBlur={[Function]}
+          onChange={[Function]}
+          type="date"
+          value=""
+        />
+        
+      </div>
+      <button
+        className="button-base transaction-submit-button"
+        style={Object {}}
+        type="submit"
+      >
+        Submit
+      </button>
+    </form>
   </main>
 </div>
 `;
