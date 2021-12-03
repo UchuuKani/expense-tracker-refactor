@@ -17,13 +17,13 @@ interface FormInputState {
   // by using input[type="number"], it seems to guarantee we can only enter numeric values and "."
   amount: string;
   description: string;
-  tagInput?: string;
+  tagInput: string;
 }
 
 interface FormErrorState {
   description?: string;
   amount?: string;
-  tagInput: string;
+  tagInput?: string;
   date?: string;
 }
 
@@ -99,13 +99,11 @@ function reducer(
       return state;
     }
     case "REMOVE_TAG": {
-      if (event && event.payload && event.payload.value) {
-        const newList = state.tagsList.filter((tag) => {
-          return tag !== event.payload.value;
-        });
+      const newList = state.tagsList.filter((tag) => {
+        return tag !== event?.payload?.value;
+      });
 
-        return { ...state, tagsList: newList };
-      }
+      return { ...state, tagsList: newList };
     }
     case "SUBMIT": {
       return initialFormState;
@@ -130,10 +128,10 @@ interface InputFieldItem {
 }
 
 const inputFieldItems: InputFieldItem[] = [
-  { identifier: "description", label: "Description" },
-  { identifier: "amount", label: "Amount", inputType: "number" },
-  { identifier: "tagInput", label: "Tags" },
-  { identifier: "date", label: "Date", inputType: "date" },
+  { identifier: "description", label: "Description:" },
+  { identifier: "amount", label: "Amount:", inputType: "number" },
+  { identifier: "tagInput", label: "Tags:" },
+  { identifier: "date", label: "Date:", inputType: "date" },
 ];
 
 // field validators
@@ -151,7 +149,7 @@ function descriptionValidator(desc: string): ValidationError {
       error: true,
       message: "Description must be longer than 5 characters",
     };
-  return { error: false };
+  return { error: false, message: "" };
 }
 
 // want to handle positive and negative values - either should be ok
@@ -166,21 +164,25 @@ function amountValidator(amount: number | string): ValidationError {
   if (amount === 0 || amount === "0")
     return { error: true, message: "Amount can't be 0" };
 
-  return { error: false };
+  return { error: false, message: "" };
 }
 
-function tagsValidator(tags: string[]): ValidationError {
+function tagValidator(tagVal: string, currentTags: string[]): ValidationError {
   // tags are optional
-  if (tags.length === 0) return { error: false };
+  if (tagVal.length === 0) return { error: false, message: "" };
 
   // if tags are included, they should not be an empty string
-  for (const tag of tags) {
+  for (const tag of currentTags) {
     if (isEmptyString(tag))
       // might need to re-examine this
-      return { error: true, message: "Tags cannot be empty" };
+      return { error: true, message: "Tags cannot be blank" };
   }
 
-  return { error: false };
+  if (currentTags.includes(tagVal)) {
+    return { error: true, message: "Cannot add duplicate tag" };
+  }
+
+  return { error: false, message: "" };
 }
 
 // by using input type=date, the html element already prevents invalid dates from being entered
@@ -193,27 +195,15 @@ function dateValidator(inputDate: string): ValidationError {
   if (Date.parse(inputDate) > new Date().valueOf())
     return { error: true, message: "Date can't be in the future" };
 
-  return { error: false };
+  return { error: false, message: "" };
 }
 
 const fieldValidators = {
   description: descriptionValidator,
   amount: amountValidator,
-  tags: tagsValidator,
+  tagInput: tagValidator,
   date: dateValidator,
 };
-
-// this is meant to be the blur handler on fields to determine if a field error should be cleared (assuming an error exists for the field)
-// or should we just let the user re-submit, instead of trying to clear errors on blur?
-function validateField(
-  identifier: keyof typeof fieldValidators,
-  fieldVal: string,
-  send: (reducerEvent: ReducerEvent) => void
-): void {
-  const validatorFunc = fieldValidators[identifier];
-
-  const isFieldValid = validatorFunc(fieldVal);
-}
 
 const TransactionForm: React.FC = (props) => {
   const [state, send] = useReducer(reducer, initialFormState);
@@ -233,45 +223,16 @@ const TransactionForm: React.FC = (props) => {
     // validate front end inputs before api call
     let validDescription = descriptionValidator(state.inputs.description);
     let validAmount = amountValidator(state.inputs.amount);
-
-    // may not even try to validate tagInput, and probably don't need to validate tagsList
-    /*
-    let validTags;
-    // tags is not a required field
-    if (state.tagsList.length > 0) {
-      validTags = tagsValidator(state.inputs.tagsList);
-    }
-    */
-
     let validDate = dateValidator(state.inputs.date);
 
-    // want to set some errors too
-    if (
-      validDescription.error ||
-      validAmount.error ||
-      validDate.error
-      // (validTags && !validTags.error) ||
-    ) {
-      let errors: FormErrorState = {};
+    let formErrors: FormErrorState = {};
+    formErrors.description = validDescription.message;
+    formErrors.amount = validAmount.message;
+    formErrors.date = validDate.message;
 
-      // refactor to clear errors if one already exists for the field, but the field itself has been updated to a valid input before su
-      if (validDescription.error && validDescription.message) {
-        errors.description = validDescription.message;
-      }
-      if (validAmount.error && validAmount.message) {
-        errors.amount = validAmount.message;
-      }
-      // if (validTags && validTags.error && validTags.message) {
-      //   errors.tags = validTags.message;
-      // }
-      if (validDate.error && validDate.message) {
-        errors.date = validDate.message;
-      }
-      console.log("awa errors?", errors);
-      send({ type: "SET_ERRORS", payload: { errors } });
-      return;
-    }
-    console.log("are we executing?");
+    send({ type: "SET_ERRORS", payload: { errors: formErrors } });
+
+    if (formErrors.description || formErrors.amount || formErrors.date) return;
     // make some api call to persist entities
     // fetch(...).then(...)
 
@@ -281,21 +242,26 @@ const TransactionForm: React.FC = (props) => {
     // non-empty inputs before being able to submit (disable submit button, or have it do nothing until all inputs filled) - excluding "tags" field
     // if manually entering a date, need to validate it is in a valid format/a real date. In general, dates should not be in the future
     // --I don't believe a user should be able to enter a date in the future since the idea behind this project is to enter transactions from receipts
+
     send({ type: "SUBMIT" });
   };
 
   const addTag = (event: React.FormEvent) => {
     event.preventDefault();
-    // if tagInput is falsey (so either an empty string or undefined), immediately return when "Add Tag" button is clicked
-    if (!state.inputs.tagInput) return;
     // if trying to add a blank input (empty string, multiple spaces, a tab character, etc.), clear the input
-    if (isEmptyString(state.inputs.tagInput)) {
-      send({ type: "CHANGE", payload: { value: "" } });
+    if (
+      state.inputs.tagInput !== undefined &&
+      isEmptyString(state.inputs.tagInput)
+    ) {
+      send({ type: "CHANGE", payload: { field: "tagInput", value: "" } });
       return;
     }
     // if the current input trying to be added to tagsList is not already contained
     // (after trimming and converting to lowercase), then add the tagInput to tagsList
-    if (!containsDuplicates(state.inputs.tagInput, state.tagsList)) {
+    if (
+      state.inputs.tagInput &&
+      !containsDuplicates(state.inputs.tagInput, state.tagsList)
+    ) {
       send({ type: "ADD_TAG" });
       return;
     }
@@ -309,10 +275,33 @@ const TransactionForm: React.FC = (props) => {
     send({ type: "REMOVE_TAG", payload: { value: removedTag } });
   };
 
-  console.log("state", state);
+  const validateNewTag = () => {
+    const tagsValid = tagValidator(state.inputs.tagInput, state.tagsList);
+    // if there is a tag validation error, set an error on tagInput
+    if (tagsValid.error) {
+      send({
+        type: "SET_ERRORS",
+        payload: { errors: { tagInput: tagsValid.message } },
+      });
+      return;
+    }
+    // otherwise, check if there is an existing state.errors.tagInput error - if there is, then clear it
+    if (state.errors.tagInput && !tagsValid.error) {
+      send({
+        type: "SET_ERRORS",
+        payload: { errors: { tagInput: "" } },
+      });
+    }
+  };
+
   return (
     <form className="transaction-form-container" onSubmit={handleSubmit}>
       {inputFieldItems.map((item) => {
+        const blurObj = {
+          blurHandler:
+            item.identifier === "tagInput" ? validateNewTag : () => {},
+        };
+
         return (
           <TransactionField
             key={item.identifier}
@@ -324,10 +313,10 @@ const TransactionForm: React.FC = (props) => {
             disabled={false}
             labelContent={item.label}
             errorMsg={state.errors[item.identifier]}
-            blurHandler={() => {}}
             addTag={addTag}
             removeTag={removeTag}
             tagsList={state.tagsList}
+            {...blurObj}
           />
         );
       })}
@@ -344,15 +333,15 @@ interface ITransactionFieldProps {
   id: FieldTypes;
   name: FieldTypes;
   type?: React.HTMLInputTypeAttribute | undefined;
-  value: string;
+  value: string | undefined;
   handleChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   disabled?: boolean;
   labelContent: string;
   errorMsg?: string;
-  blurHandler: (inputVal: string) => void;
   addTag: (event: React.FormEvent) => void;
   removeTag: (event: React.FormEvent, value: string) => void;
   tagsList: string[];
+  blurHandler?: () => void;
 }
 
 const TransactionField: React.FC<ITransactionFieldProps> = ({
@@ -364,10 +353,10 @@ const TransactionField: React.FC<ITransactionFieldProps> = ({
   disabled,
   labelContent,
   errorMsg,
-  blurHandler,
   addTag,
   removeTag,
   tagsList,
+  blurHandler,
 }) => {
   // could map over array of strings which represent the inputs (e.g. ["description", "amount", "tags", "date"]), or array of objects with the string as one field
   // id and name would come from the string itself
@@ -384,7 +373,7 @@ const TransactionField: React.FC<ITransactionFieldProps> = ({
         value={value}
         onChange={handleChange}
         disabled={disabled}
-        onBlur={() => blurHandler(value)}
+        onBlur={blurHandler}
       />
       {errorMsg && <p className="transaction-form-error">{errorMsg}</p>}
       {name === "tagInput" && (
@@ -411,14 +400,14 @@ const TagCombinedField: React.FC<TagCombinedFieldProps> = ({
 }) => {
   return (
     <>
-      <button onClick={addTag}>Add Tag</button>
+      <Button handleClick={addTag}>Add Tag</Button>
       {tagsList.length > 0 && (
         <ul className="transaction-tag-list">
           {tagsList.map((tag) => {
             return (
               <li key={tag} className="transaction-tag-list-item">
                 <div>
-                  {tag}{" "}
+                  {tag}
                   <button
                     type="button"
                     onClick={(event) => removeTag(event, tag)}
