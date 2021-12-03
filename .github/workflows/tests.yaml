@@ -18,5 +18,4 @@ jobs:
         with:
           node-version: "14"
       - run: npm install
-      - run: pwd
-      - run: echo "it ran"
+      - run: npm run test
