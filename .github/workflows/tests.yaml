@@ -18,5 +18,6 @@ jobs:
         with:
           node-version: "14"
       - run: cd ${{ matrix.dir }}
+      - run: echo pwd
       - run: npm install
       - run: npm run test
