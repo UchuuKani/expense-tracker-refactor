@@ -7,14 +7,14 @@ describe("Transaction Form render", () => {
   it("renders labels for Description, Amount, Tags, and Date", () => {
     render(<TransactionForm />);
 
-    const descriptionLabel = screen.getByText("Description:");
-    const amountLabel = screen.getByText("Amount:");
-    const tagsLabel = screen.getByText("Tags:");
-    const dateLabel = screen.getByText("Date:");
+    const descriptionInput = screen.getByLabelText("Description:");
+    const amountInput = screen.getByLabelText("Amount:");
+    const tagsInput = screen.getByLabelText("Tags:");
+    const dateInput = screen.getByLabelText("Date:");
 
-    expect(descriptionLabel).toBeInTheDocument();
-    expect(amountLabel).toBeInTheDocument();
-    expect(tagsLabel).toBeInTheDocument();
-    expect(dateLabel).toBeInTheDocument();
+    expect(descriptionInput).toBeInTheDocument();
+    expect(amountInput).toBeInTheDocument();
+    expect(tagsInput).toBeInTheDocument();
+    expect(dateInput).toBeInTheDocument();
   });
 });
