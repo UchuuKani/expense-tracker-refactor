@@ -1,10 +1,10 @@
 import Head from "next/head";
 import Image from "next/image";
 import styles from "../styles/Home.module.scss";
-import { ITransaction } from "../src/types";
 
 // components
 import TransactionForm from "../src/components/TransactionForm";
+import TransactionTable from "../src/components/TransactionTable";
 
 export default function Home() {
   return (
@@ -19,6 +19,7 @@ export default function Home() {
           Welcome to Expense Tracker!
         </h1>
         <TransactionForm />
+        <TransactionTable />
       </main>
     </div>
   );
