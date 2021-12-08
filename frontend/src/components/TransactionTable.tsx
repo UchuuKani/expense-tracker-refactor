@@ -19,7 +19,7 @@ const TransactionTable: React.FC = (props) => {
         <tr>
           <td>Food</td>
           <td>$15.00</td>
-          <td>{new Date().toString()}</td>
+          <td>Wed Dec 08 2021 17:59:47 GMT-0500 (Eastern Standard Time)</td>
           <td>Groceries</td>
         </tr>
       </tbody>
