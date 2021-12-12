@@ -161,7 +161,7 @@ function amountValidator(amount: number | string): ValidationError {
     return { error: true, message: "Amount can only be a number" };
 
   // would it make sense to enter a 0 dollar amount? for sake of this exercise, lets say no
-  if (amount === 0 || amount === "0")
+  if (typeof amount === "string" && parseFloat(amount) + 0 === 0)
     return { error: true, message: "Amount can't be 0" };
 
   return { error: false, message: "" };
