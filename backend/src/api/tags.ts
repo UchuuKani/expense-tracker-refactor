@@ -65,7 +65,7 @@ router.post("/", async (req: Request, res: Response, next: NextFunction) => {
       const tagPostError: ExpressError = new Error(
         "No tag name included in request body"
       );
-      tagPostError.status = 404;
+      tagPostError.status = 400;
       throw tagPostError;
     }
 
