@@ -75,7 +75,7 @@ router.post("/", async (req: Request, res: Response, next: NextFunction) => {
     // there will be tag data returned
     const { rows } = await client.query(query, [tagName]);
 
-    res.status(201).send(rows[0]);
+    return res.status(201).send(rows[0]);
   } catch (err) {
     console.log(`Failed to add new tag`);
     console.error(err);
