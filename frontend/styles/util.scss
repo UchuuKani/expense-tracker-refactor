@@ -1,0 +1,29 @@
+/*
+Grabbed this utility class from Josh W Comeau's css-for-js devs course
+
+can use this .max-width-wrapper utility on a containing element to:
+1 - fill available space on smaller viewports - max-width
+2 - set a maximum width, and will horizontally center itself within the parent if there is leftover space. margin-left: auto, margin-right: auto
+3 - It includes a bit of horizontal “breathing room”, so that its children aren't pressed right up against the edges of the viewport. - padding-left, padding-right
+use would be something like:
+
+<div className="max-width-wrapper">
+  <div className="something-else">
+    <p>Hello there is a ton of text here believe me</p>
+  </div>
+</div>
+
+One nice thing about this class is we can drop this utility class on an element and not worry about if the parent element is using flexbox?
+*/
+.max-width-wrapper {
+  // I believe general approach is to set properties as you would use them for a mobile view, and then apply properties for larger
+  // screen sizes in a media query with min-width
+  max-width: 350px; // arbitrary number, would probably set this to different value according to my use-case? Or use a media query?
+  margin-left: auto; // margin-left and margin-right set to auto to horizontally center the container that this max-width-wrapper class is being applied to
+  margin-right: auto; // not using margin: 0 auto; in case we want to set top and bottom margins differently from 0
+  padding-left: 16px; // need to keep in mind that the padding here adds to the inner area of container element that max-width-wrapper is being applied to
+  padding-right: 16px; // so the content area of the max-width-wrapper element will have 16px applied to the left and right
+  // when the view port is larger than 16px, we won't notice the padding unless we add a background-color (or something like it), but when the viewport
+  // shrinks enough, we will notice the 16px left and right padding since children of max-width-wrapper element won't be touching the sides of the viewport, rather
+  // there will be 16px separating the children elements from the edge
+}
